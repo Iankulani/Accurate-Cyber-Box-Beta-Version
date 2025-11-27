@@ -23,12 +23,16 @@ It’s not just a testing tool — it’s a cybersecurity training ecosystem tha
 
 With Accurate-Cyber-Box Beta, organizations can move beyond reactive security measures, cultivating proactive defenses, skilled teams, and proven readiness for the cyber challenges of tomorrow.
 
-**How to clone**
+## How to clone
+
+```bash
 
 git clone https://github.com/Iankulani/Accurate-Cyber-Box-Beta-Version.git
 
 cd Accurate-Cyber-Box-Beta-Version
+```
 
-**How to run**
-
+## How to run
+```bash
 python3 Accurate-Cyber-Box-Beta-Version.py
+```
