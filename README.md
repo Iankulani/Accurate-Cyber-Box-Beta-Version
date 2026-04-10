@@ -26,7 +26,6 @@ With Accurate-Cyber-Box Beta, organizations can move beyond reactive security me
 ## How to clone
 
 ```bash
-
 git clone https://github.com/Iankulani/Accurate-Cyber-Box-Beta-Version.git
 
 cd Accurate-Cyber-Box-Beta-Version
@@ -34,7 +33,7 @@ cd Accurate-Cyber-Box-Beta-Version
 
 ## How to run
 ```bash
-python3 Accurate-Cyber-Box-Beta-Version.py
+python3 cyber_drill.py
 ```
 ## How to run on docker 
 ```bash
