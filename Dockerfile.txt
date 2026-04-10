@@ -1,0 +1,72 @@
+# Standard Dockerfile for Debian/Ubuntu base
+FROM python:3.9-slim-bullseye
+
+LABEL maintainer="CyberDrill Team"
+LABEL description="CyberDrill Advanced Security Tool"
+LABEL version="1.0-beta"
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    libxcb-xinerama0 \
+    libxcb-icccm4 \
+    libxcb-image0 \
+    libxcb-keysyms1 \
+    libxcb-randr0 \
+    libxcb-render-util0 \
+    libxcb-shape0 \
+    libxcb-xfixes0 \
+    libxcb-xkb1 \
+    libxkbcommon-x11-0 \
+    libfontconfig1 \
+    libfreetype6 \
+    libdbus-1-3 \
+    iputils-ping \
+    traceroute \
+    nmap \
+    tcpdump \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app directory
+WORKDIR /app
+
+# Create non-root user
+RUN useradd -m -u 1000 cyberdrill && \
+    mkdir -p /app/icons && \
+    chown -R cyberdrill:cyberdrill /app
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application files
+COPY cyberdrill.py .
+COPY icons/ ./icons/
+
+# Set permissions
+RUN chmod +x cyberdrill.py && \
+    chown -R cyberdrill:cyberdrill /app
+
+# Switch to non-root user
+USER cyberdrill
+
+# Set environment variables
+ENV DISPLAY=:0
+ENV QT_X11_NO_MITSHM=1
+ENV PYTHONUNBUFFERED=1
+
+# Create volume for data persistence
+VOLUME ["/app/data"]
+
+# Expose ports if needed (adjust as necessary)
+EXPOSE 8080
+
+# Run the application
+CMD ["python3", "cyberdrill.py"]

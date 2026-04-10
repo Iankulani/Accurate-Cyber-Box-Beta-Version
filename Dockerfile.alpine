@@ -1,0 +1,77 @@
+# Alpine-based Dockerfile for smaller image size
+FROM python:3.9-alpine
+
+LABEL maintainer="CyberDrill Team"
+LABEL description="CyberDrill Advanced Security Tool (Alpine Version)"
+LABEL version="1.0-beta"
+
+# Install system dependencies for Alpine
+RUN apk add --no-cache \
+    bash \
+    mesa-gl \
+    glib \
+    libx11 \
+    libxext \
+    libxrender \
+    libxcb \
+    xcb-util-wm \
+    xcb-util-image \
+    xcb-util-keysyms \
+    xcb-util-renderutil \
+    fontconfig \
+    freetype \
+    dbus \
+    dbus-x11 \
+    iputils \
+    traceroute \
+    nmap \
+    tcpdump \
+    gcc \
+    musl-dev \
+    python3-dev \
+    linux-headers \
+    libffi-dev \
+    openssl-dev \
+    make \
+    cmake
+
+# Create app directory
+WORKDIR /app
+
+# Create non-root user (Alpine style)
+RUN addgroup -g 1000 cyberdrill && \
+    adduser -D -u 1000 -G cyberdrill cyberdrill && \
+    mkdir -p /app/icons /app/data && \
+    chown -R cyberdrill:cyberdrill /app
+
+# Copy requirements
+COPY requirements.txt .
+
+# Install Python dependencies with Alpine-specific optimizations
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir pyqt5-sip
+
+# Copy application files
+COPY cyberdrill.py .
+COPY icons/ ./icons/
+
+# Set permissions
+RUN chmod +x cyberdrill.py && \
+    chown -R cyberdrill:cyberdrill /app
+
+# Switch to non-root user
+USER cyberdrill
+
+# Set environment variables for Alpine
+ENV DISPLAY=:0
+ENV QT_X11_NO_MITSHM=1
+ENV PYTHONUNBUFFERED=1
+ENV QT_QPA_PLATFORM=offscreen
+ENV QT_QPA_FONTDIR=/usr/share/fonts
+
+# Create volume for data persistence
+VOLUME ["/app/data"]
+
+# Run the application with offscreen rendering for headless environments
+CMD ["python3", "cyberdrill.py"]

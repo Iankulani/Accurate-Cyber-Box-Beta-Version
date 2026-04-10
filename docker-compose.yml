@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  cyberdrill:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cyberdrill-tool
+    hostname: cyberdrill
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Mount X11 socket for GUI
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # Mount data directory for persistence
+      - ./data:/app/data
+      # Mount icons directory for development
+      - ./icons:/app/icons:ro
+    network_mode: host
+    stdin_open: true
+    tty: true
+    command: python3 cyberdrill.py
+
+  cyberdrill-alpine:
+    build:
+      context: .
+      dockerfile: Dockerfile.alpine
+    container_name: cyberdrill-alpine
+    hostname: cyberdrill-alpine
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - PYTHONUNBUFFERED=1
+      - QT_QPA_PLATFORM=offscreen
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./data-alpine:/app/data
+      - ./icons:/app/icons:ro
+    network_mode: host
+    stdin_open: true
+    tty: true
+    profiles:
+      - alpine
+    command: python3 cyberdrill.py
